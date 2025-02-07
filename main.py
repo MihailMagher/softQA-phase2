@@ -34,3 +34,6 @@ while True:
     #login command starts the login system
     elif(act == "login"):
         login.login()
+
+    else:
+        print("<ERROR> you need to be logged in to use this system, please type 'login' to begin the login process.")

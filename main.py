@@ -12,6 +12,9 @@ import re
 import login
 
 while True:
+    #global variables
+    type = ""
+
     #ask for the action
     act = input("enter action, type help for more information:")
 
@@ -33,7 +36,7 @@ while True:
 
     #login command starts the login system
     elif(act == "login"):
-        login.login()
+        type = login.login()
 
     else:
         print("<ERROR> you need to be logged in to use this system, please type 'login' to begin the login process.")

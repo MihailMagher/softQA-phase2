@@ -2,8 +2,8 @@ from session import Session
 from bank import Bank
 
 if __name__ == "__main__":
-    accounts_file_path = "C:/Users/Briant/PythonCode/BigBank/current accounts/current_accounts.txt"
-    transaction_log_path = "C:/Users/Briant/PythonCode/BigBank/bank account transaction file(output)/bank_transaction_log"
+    accounts_file_path = "../BigBank/current accounts/current_accounts.txt"
+    transaction_log_path = "../BigBank/bank account transaction file(output)/bank_transaction_log"
 
     users = Bank.get_accounts(accounts_file_path)
 

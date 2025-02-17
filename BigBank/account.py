@@ -1,12 +1,14 @@
 import os
+from colorama import Fore, Style
 #test
 class Accounts:
-    def __init__(self, user, users, accounts_file, bank):
+    def __init__(self, user, users, accounts_file, bank, session):
         self.user = user
         self.users = users
         self.accounts_file = accounts_file
         self.bank = bank
-        self.transaction_log = "C:/Users/Briant/PythonCode/BigBank/bank account transaction file(output)/bank_transaction_log"
+        self.session = session
+        self.transaction_log = "../BigBank/bank account transaction file(output)/bank_transaction_log"
     
     def display_account_info(self):
         self.clear_screen()
@@ -25,72 +27,58 @@ class Accounts:
             choice = input("Enter your choice: ").strip()
 
             if choice == "1":
-                self.withdraw()
+                self.withdraw(self.session)
             elif choice == "2" and self.user.is_admin():
-                self.bank.create_account(self.user)  # Call create_account from Bank class
+                self.bank.create_account(self.session)  
             elif choice == "0":
-                return  # Logout
+                self.session.logout()
             else:
                 print("Invalid choice. Please enter a valid option.")
 
     
-    def withdraw(self):
-        if self.user.is_admin():
-            account_holder_name = input("Enter the account holder's name: ").strip().lower()
-            
-            # Filter users by name
-            matching_users = [u for u in self.users.values() if u.name.lower() == account_holder_name]
-            
-            if not matching_users:
-                print("No account found with that name.")
-                return
-            
-            # If multiple users match, ask for account number
-            if len(matching_users) > 1:
-                account_number = input("Enter the account number: ").strip()
-                target_user = next((u for u in matching_users if u.user_id == account_number), None)
-            else:
-                target_user = matching_users[0]  # Only one match found, use it
-
-        else:
-            # Standard users enter account number directly
-            account_number = input("Enter your account number: ").strip()
-            target_user = self.users.get(account_number)
+    def withdraw(self, session):
+        # """Withdraws money but prevents new accounts from being accessed in the same session."""
+        account_identifier = input("Enter the account holder's name: ").strip().lower()
+        
+        # Find user by name
+        target_user = next((u for u in self.users.values() if u.name.lower() == account_identifier), None)
 
         if not target_user:
-            print("Account not found.")
+            print(Fore.RED + "Account not found." + Style.RESET_ALL)
+            return
+
+        # Check if account was just created in this session
+        if target_user.user_id in session.newly_created_accounts:
+            print(Fore.YELLOW + "This account was just created and cannot be accessed until next login." + Style.RESET_ALL)
             return
 
         amount_str = input("Enter amount to withdraw: ").strip()
         try:
             amount = float(amount_str)
             if amount <= 0:
-                print("Withdrawal amount must be positive.")
+                print(Fore.RED + "Withdrawal amount must be positive." + Style.RESET_ALL)
                 return
 
             if not self.user.is_admin() and amount > 500.00:
-                print("Standard users can only withdraw up to $500.00 per session.")
+                print(Fore.RED + "Standard users can only withdraw up to $500.00 per session." + Style.RESET_ALL)
                 return
 
             if target_user.balance - amount < 0:
-                print("Insufficient funds. Balance must remain at least $0.00.")
+                print(Fore.RED + "Insufficient funds. Balance must remain at least $0.00." + Style.RESET_ALL)
                 return
 
-            # Update balance
             target_user.balance -= amount
-            print(f"Withdrawal successful. New balance: ${target_user.balance:.2f}")
+            print(Fore.GREEN + f"Withdrawal successful. New balance: ${target_user.balance:.2f}" + Style.RESET_ALL)
 
-            # Log transaction
             self.log_transaction(target_user, amount)
-
-            # Update balance in the account file
             self.update_account_balance(target_user)
 
         except ValueError:
-            print("Invalid amount entered. Please enter a valid number.")
+            print(Fore.RED + "Invalid amount entered. Please enter a valid number." + Style.RESET_ALL)
+
     
     def log_transaction(self, target_user, amount):
-        """ Logs transaction in bank_transaction_log with proper formatting """
+        # """ Logs transaction in bank_transaction_log with proper formatting """
 
         transaction_code = "01"  # 01 for withdrawal
         formatted_name = target_user.name.ljust(20)[:20]  # 20-char left-justified

@@ -1,25 +1,23 @@
-00023_John_Doe            _A_0150075
+00023_John_Doe            _A_00150075
 00045_Jane_Smith          _A_00200000
-00067_Michael_Johnson     _D_0189050
-00089_Emily_Davis         _A_0050000
-00012_Chris_Brown         _D_0010025
-00034_Anna_Wilson         _A_0330000
-00056_James_Miller        _A_0275050
-00078_Olivia_Martinez     _D_0090099
-00090_Daniel_Anderson     _A_0130000
-00011_Sophia_Thomas       _A_0205075
-00022_William_Moore       _D_0000000
-00033_Emma_Lee            _A_0060000
-00044_Mason_White         _A_0420000
-00055_Ava_Harris          _D_0007500
-00066_Liam_Clark          _A_0325025
-00077_Mia_Lewis           _A_0289000
-00088_Benjamin_Young      _D_0040000
-00099_Charlotte_King      _A_0500050
-00100_Henry_Scott         _D_0000000
-00101_Amelia_Hall         _A_0070075
-13251_Henry Peng          _A_01000000
-27524_Michael Jean-Pierre _A_00123151
+00067_Michael_Johnson     _D_00189050
+00089_Emily_Davis         _A_00050000
+00012_Chris_Brown         _D_00010025
+00034_Anna_Wilson         _A_00330000
+00056_James_Miller        _A_00275050
+00078_Olivia_Martinez     _D_00090099
+00090_Daniel_Anderson     _A_00130000
+00011_Sophia_Thomas       _A_00205075
+00022_William_Moore       _D_00000000
+00033_Emma_Lee            _A_00060000
+00044_Mason_White         _A_00420000
+00055_Ava_Harris          _D_00007500
+00066_Liam_Clark          _A_00325025
+00077_Mia_Lewis           _A_00289000
+00088_Benjamin_Young      _D_00040000
+00099_Charlotte_King      _A_00500050
+00100_Henry_Scott         _D_00000000
+00101_Amelia_Hall         _A_00070075
 00000_END_OF_FILE_________ _ 00000000
 
-19383_Mihail              _A_01200000
+

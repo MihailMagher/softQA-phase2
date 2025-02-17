@@ -43,24 +43,26 @@ class Bank:
                         continue
 
                     user_id = parts[0]
-                    name = parts[1] + " " + parts[2]
-                    status = parts[3] 
-                    balance_str = parts[4] 
+                    if len(parts) >= 6:
+                        name = parts[1] + " " + parts[2]
+                        status = parts[3]
+                        balance_str = parts[4]
+                        payment_plan = parts[5]
+                    else:
+                        name = parts[1] + " " + parts[2]
+                        status = parts[3]
+                        balance_str = parts[4]
+                        payment_plan = "SP" 
 
                     # Ensure balance is a valid number
                     if not balance_str.isdigit():
                         print(Fore.YELLOW + f"Warning: Invalid balance '{balance_str}' for {name}. Skipping account." + Style.RESET_ALL)
                         continue
-
                     balance = int(balance_str) / 100  # Convert cents to dollars
-
-                    users[user_id] = Bank(user_id, name, status, balance)
-
+                    users[user_id] = Bank(user_id, name, status, balance, payment_plan=payment_plan)
             print(Fore.CYAN + f"🔄 Successfully loaded {len(users)} accounts from file." + Style.RESET_ALL)
-
         except FileNotFoundError:
             print(Fore.RED + "Error: User data file not found." + Style.RESET_ALL)
-
         return users
 
     def create_account(self, session):
@@ -70,14 +72,16 @@ class Bank:
             return
 
         print("\nCreating New Account")
-        full_name = input("Enter account holder's full name: ").strip()
+        first_name = input("Enter account holder's first name: ").strip()
+        last_name = input("Enter account holder's last name: ").strip()
+
+        if not first_name or not last_name:
+            print(Fore.RED + "Error: Both first and last names are required." + Style.RESET_ALL)
+            return
 
         # Ensure name format (replace spaces with underscores, limit to 20 characters)
-        formatted_name = "_".join(full_name.split()).ljust(20)[:20]
-
-        if len(formatted_name.strip()) > 20:
-            print(Fore.RED + "Error: Name cannot exceed 20 characters." + Style.RESET_ALL)
-            return
+        formatted_first_name = first_name.ljust(10)[:10]
+        formatted_last_name = last_name.ljust(10)[:10]
 
         initial_balance = input("Enter initial balance (Max: $99,999.99): ").strip()
 
@@ -97,28 +101,32 @@ class Bank:
         # Format balance (8-digit, zero-padded)
         balance_cents = str(int(balance * 100)).zfill(8)
 
+        # The default payment plan is "SP"
+        payment_plan = "SP"
+
         # Correctly formatted account entry
-        new_account_entry = f"{new_account_id}_{formatted_name}_A_{balance_cents}\n"
+        new_account_entry = f"{new_account_id}_{formatted_first_name}_{formatted_last_name}_A_{balance_cents}_{payment_plan}\n"
 
-        try:
-            with open(self.accounts_file, "r+") as file:
+         try:
+            with open(self.accounts_file, "r+", encoding="utf-8") as file:
                 lines = file.readlines()
-
-                # ind "END_OF_FILE" and insert the new account above it
+                inserted = False
                 for i, line in enumerate(lines):
                     if "END_OF_FILE" in line:
                         lines.insert(i, new_account_entry)
+                        inserted = True
                         break
-
+                if not inserted:
+                    lines.append(new_account_entry)
                 file.seek(0)
                 file.writelines(lines)
 
             print(Fore.GREEN + f"Account successfully created! Account Number: {new_account_id}" + Style.RESET_ALL)
 
-            # Store the new account in session but BLOCK ACCESS in same session
-            new_user = Bank(new_account_id, formatted_name.strip(), "A", balance)
-            self.users[new_account_id] = new_user  # Add to users list
 
+            # Store the new account in session but BLOCK ACCESS in same session
+            ew_user = Bank(new_account_id, f"{first_name} {last_name}", "A", balance, payment_plan=payment_plan)
+            self.users[new_account_id] = new_user
             session.newly_created_accounts.append(new_account_id)
             print(Fore.YELLOW + "This account will be available after the next login session." + Style.RESET_ALL)
 
@@ -134,44 +142,46 @@ class Bank:
             with open(self.accounts_file, "r", encoding="utf-8") as file:
                 lines = file.readlines()
 
-            new_account_number = str(random.randint(00000, 99999)).zfill(5)
-
+            new_account_number = str(random.randint(0, 99999)).zfill(5)
             existing_accounts = {line[:5] for line in lines if line.strip() and "END_OF_FILE" not in line}
             while new_account_number in existing_accounts:
-                new_account_number = str(random.randint(00000, 99999)).zfill(5)
+                new_account_number = str(random.randint(0, 99999)).zfill(5)
 
             # Ensure underscores instead of spaces in name
-            formatted_name = name.replace(" ", "_").ljust(20)[:20]  # Left-aligned, max 20 chars
+             name_parts = name.split()
+            if len(name_parts) < 2:
+                formatted_first_name = name.replace(" ", "").ljust(10)[:10]
+                formatted_last_name = "".ljust(10)
+            else:
+                formatted_first_name = name_parts[0].ljust(10)[:10]
+                formatted_last_name = name_parts[1].ljust(10)[:10]
 
-            formatted_balance = str(balance_cents).zfill(8)  # Right-aligned 8-character field
-
-            new_entry = f"{new_account_number}_{formatted_name}_A_{formatted_balance}\n"
-
+            formatted_balance = str(balance_cents).zfill(8)
+            payment_plan = "SP"
+            new_entry = f"{new_account_number}_{formatted_first_name}_{formatted_last_name}_A_{formatted_balance}_{payment_plan}\n"
             # Insert above END_OF_FILE
             with open(self.accounts_file, "w", encoding="utf-8") as file:
                 for line in lines:
                     if "END_OF_FILE" in line:
-                        file.write(new_entry)  # Insert new account before EOF line
+                        file.write(new_entry) # Insert new account before EOF line
                     file.write(line)
 
             print(Fore.GREEN + f"Account successfully created! Account Number: {new_account_number}" + Style.RESET_ALL)
-            return new_account_number  # eturn the generated account number
+            return new_account_number # eturn the generated account number
 
         except Exception as e:
             print(Fore.RED + f"Error saving account to file: {e}" + Style.RESET_ALL)
-            return None  # Return None if something goes wrong
-
-
+            return None # Return None if something goes wrong
+            
+            
 
     def log_account_creation(self, account_number, name, balance_cents):
         # """ Logs the new account creation to the transaction file """
         transaction_code = "05"
-        misc_info = "00"
-        log_entry = f"{transaction_code}_{name.ljust(20)[:20]}_{account_number}_{str(balance_cents).zfill(8)}_{misc_info}\n"
-
+        formatted_name = name.ljust(20)[:20]
+        log_entry = f"{transaction_code}_{formatted_name}_{account_number}_{str(balance_cents).zfill(8)}_00\n"
         try:
             with open(self.transaction_log, "a", encoding="utf-8") as log_file:
                 log_file.write(log_entry)
         except Exception as e:
             print(Fore.RED + f"Error writing to transaction log: {e}" + Style.RESET_ALL)
-

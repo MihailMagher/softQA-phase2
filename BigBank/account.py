@@ -14,7 +14,9 @@ class Accounts:
         self.clear_screen()
         print(f"\nWelcome {self.user.name}! You are now logged in.")
         print(f"Account Number: {self.user.user_id}")
-        print(f"Balance: ${self.user.balance}")
+        print(f"Balance: ${self.user.balance:.2f}")
+        print(f"Status: {self.user.status}")
+        print(f"Payment Plan: {self.user.payment_plan}")
         self.accounts_menu()
     
     def accounts_menu(self):
@@ -22,14 +24,20 @@ class Accounts:
             print("\nOptions:")
             print("[1] Withdraw Money")
             if self.user.is_admin():
-                print("[2] Create New Account")  # New option for admins
+                print("[2] Create New Account")      # For Administrators
+                print("[3] Disable Account")         # Placeholder: Disable account function to be implemented
+                print("[4] Change Payment Plan")       # Placeholder: Change payment plan function to be implemented
             print("[0] Logout")
             choice = input("Enter your choice: ").strip()
 
             if choice == "1":
-                self.withdraw(self.session)
+                self.withdraw()
             elif choice == "2" and self.user.is_admin():
-                self.bank.create_account(self.session)  
+                self.bank.create_account(self.session)
+            elif choice == "3" and self.user.is_admin():
+                print(Fore.YELLOW + "Disable Account functionality is not implemented yet." + Style.RESET_ALL)
+            elif choice == "4" and self.user.is_admin():
+                print(Fore.YELLOW + "Change Payment Plan functionality is not implemented yet." + Style.RESET_ALL)
             elif choice == "0":
                 self.session.logout()
             else:
@@ -46,9 +54,12 @@ class Accounts:
         if not target_user:
             print(Fore.RED + "Account not found." + Style.RESET_ALL)
             return
+        
+        if target_user.status == "D":
+            print(Fore.RED + "This account is disabled. No transactions allowed." + Style.RESET_ALL)
+            return
 
-        # Check if account was just created in this session
-        if target_user.user_id in session.newly_created_accounts:
+        if target_user.user_id in self.session.newly_created_accounts:
             print(Fore.YELLOW + "This account was just created and cannot be accessed until next login." + Style.RESET_ALL)
             return
 
@@ -85,7 +96,6 @@ class Accounts:
         formatted_account = target_user.user_id.zfill(5)  # 5-char right-justified, zero-padded
         formatted_amount = f"{int(amount * 100):08d}"  # 8-char right-justified, zero-padded
         misc_info = "00"  # Placeholder for miscellaneous info
-
         transaction_entry = f"{transaction_code}_{formatted_name}_{formatted_account}_{formatted_amount}_{misc_info}\n"
         
         try:
@@ -97,15 +107,20 @@ class Accounts:
     def update_account_balance(self, target_user):
         """ Updates the current account balance in the accounts file """
         try:
-            with open(self.accounts_file, "r") as file:
+            with open(self.accounts_file, "r", encoding="utf-8") as file:
                 lines = file.readlines()
 
-            with open(self.accounts_file, "w") as file:
+            with open(self.accounts_file, "w", encoding="utf-8") as file:
                 for line in lines:
                     parts = line.strip().split("_")
                     if parts[0] == target_user.user_id:
-                        parts[4] = f"{int(target_user.balance * 100):08d}"
-                        line = "_".join(parts) + "\n"
+                        # For new formats： [id, first, last, status, balance, payment_plan]
+                        if len(parts) >= 6:
+                            parts[4] = f"{int(target_user.balance * 100):08d}"
+                            line = "_".join(parts) + "\n"
+                        else:
+                            parts[4] = f"{int(target_user.balance * 100):08d}"
+                            line = "_".join(parts) + "\n"
                     file.write(line)
         except Exception as e:
             print(f"Failed to update account balance: {e}")

@@ -16,8 +16,6 @@ class Session:
         while True:
             self.clear_screen()
        
-
-
             print("Welcome to the Bank Console Application!")
             print("Select session type:")
             print("[1] Standard Session")
@@ -39,6 +37,7 @@ class Session:
         
         input_name = input("Enter your Name: ").strip().replace("_", " ")  
         
+
         found_user = next((user for user in self.users.values() if user.name.lower() == input_name.lower() and not user.is_admin()), None)
 
         if not found_user:
@@ -72,7 +71,7 @@ class Session:
         self.bank.logged_in_user = user  #Also update Bank instance
 
         # Refresh users list to include newly created accounts
-        self.bank.users = self.bank.get_accounts(self.accounts_file)  
+        self.bank.users = self.bank.get_accounts(self.accounts_file) 
 
         # Pass self.bank to Accounts so it has updated data
         account = Accounts(user, self.bank.users, self.accounts_file, self.bank, self)  
@@ -84,10 +83,8 @@ class Session:
         while True:
             self.clear_screen()
             print("Logging out...")
-            self.logged_in_user = None
-
-            #Clear new accounts so they can be accessed in the next session
-            self.newly_created_accounts.clear()
+            
+            
 
             print("You have been logged out. Would you like to log back in or exit the application?\n")
             print("[1] to login")
@@ -95,6 +92,10 @@ class Session:
             session_type = input("Enter choice (1 or 0): ").strip()
 
             if session_type == "1":
+                self.bank.users = self.bank.get_accounts(self.accounts_file)
+                #Clear new accounts so they can be accessed in the next session
+                self.newly_created_accounts.clear()
+                self.logged_in_user = None
                 self.login()
             elif session_type == "0":
                 print("Exiting application...")

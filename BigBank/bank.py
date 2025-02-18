@@ -56,15 +56,12 @@ class Bank:
 
                     users[user_id] = Bank(user_id, name, status, balance)
 
-            print(Fore.CYAN + f"🔄 Successfully loaded {len(users)} accounts from file." + Style.RESET_ALL)
-
         except FileNotFoundError:
             print(Fore.RED + "Error: User data file not found." + Style.RESET_ALL)
 
         return users
 
     def create_account(self, session):
-        # """Creates a new account, writes it to file, and prevents access in the same session."""
         if not session.logged_in_user.is_admin():
             print(Fore.RED + "Access Denied: Only admins can create accounts." + Style.RESET_ALL)
             return
@@ -104,7 +101,7 @@ class Bank:
             with open(self.accounts_file, "r+") as file:
                 lines = file.readlines()
 
-                # ind "END_OF_FILE" and insert the new account above it
+                # Find "END_OF_FILE" and insert the new account above it
                 for i, line in enumerate(lines):
                     if "END_OF_FILE" in line:
                         lines.insert(i, new_account_entry)
@@ -113,55 +110,17 @@ class Bank:
                 file.seek(0)
                 file.writelines(lines)
 
-            print(Fore.GREEN + f"Account successfully created! Account Number: {new_account_id}" + Style.RESET_ALL)
+            print(Fore.GREEN + f" Account successfully created! Account Number: {new_account_id}" + Style.RESET_ALL)
 
-            # Store the new account in session but BLOCK ACCESS in same session
+            # Add account to memory but block access in same session
             new_user = Bank(new_account_id, formatted_name.strip(), "A", balance)
-            self.users[new_account_id] = new_user  # Add to users list
+            self.users[new_account_id] = new_user
+            session.newly_created_accounts.append(new_account_id)  # Prevent immediate access
 
-            session.newly_created_accounts.append(new_account_id)
-            print(Fore.YELLOW + "This account will be available after the next login session." + Style.RESET_ALL)
+            print(Fore.YELLOW +  "This account will be available after the next login session." + Style.RESET_ALL)
 
         except Exception as e:
             print(Fore.RED + f"Error writing to accounts file: {e}" + Style.RESET_ALL)
-
-
-
-
-    def save_to_accounts_file(self, name, balance_cents):
-        # """ Inserts new account above END_OF_FILE in current_accounts.txt and returns the new account number """
-        try:
-            with open(self.accounts_file, "r", encoding="utf-8") as file:
-                lines = file.readlines()
-
-            new_account_number = str(random.randint(00000, 99999)).zfill(5)
-
-            existing_accounts = {line[:5] for line in lines if line.strip() and "END_OF_FILE" not in line}
-            while new_account_number in existing_accounts:
-                new_account_number = str(random.randint(00000, 99999)).zfill(5)
-
-            # Ensure underscores instead of spaces in name
-            formatted_name = name.replace(" ", "_").ljust(20)[:20]  # Left-aligned, max 20 chars
-
-            formatted_balance = str(balance_cents).zfill(8)  # Right-aligned 8-character field
-
-            new_entry = f"{new_account_number}_{formatted_name}_A_{formatted_balance}\n"
-
-            # Insert above END_OF_FILE
-            with open(self.accounts_file, "w", encoding="utf-8") as file:
-                for line in lines:
-                    if "END_OF_FILE" in line:
-                        file.write(new_entry)  # Insert new account before EOF line
-                    file.write(line)
-
-            print(Fore.GREEN + f"Account successfully created! Account Number: {new_account_number}" + Style.RESET_ALL)
-            return new_account_number  # eturn the generated account number
-
-        except Exception as e:
-            print(Fore.RED + f"Error saving account to file: {e}" + Style.RESET_ALL)
-            return None  # Return None if something goes wrong
-
-
 
     def log_account_creation(self, account_number, name, balance_cents):
         # """ Logs the new account creation to the transaction file """

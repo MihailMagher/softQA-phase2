@@ -18,7 +18,6 @@
 00099_Charlotte_King      _A_00500050
 00100_Henry_Scott         _D_00000000
 00101_Amelia_Hall         _A_00070075
-00102_Steffon_Assing      _A_00129808
 00000_END_OF_FILE_________ _ 00000000
 
 

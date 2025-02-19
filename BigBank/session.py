@@ -13,15 +13,17 @@ class Session:
         print("1. Standard Login")
         print("2. Admin Login")
         print("3. Exit App")
-
+    # standard user login
     def standard_login(self):
         print("\n--- Standard Login ---")
         account_holder_name = input("Enter the account holder's full name: ")
         account_info = self.bank.get_account(account_holder_name)
         if account_info:
+            # if user is admin ask them to use admin login
             if account_info["is_admin"]:
                 print(f"'{account_holder_name}' is an admin user. Please use Admin Login instead.")
             else:
+                # Validate standard user and carry them to the account info screen 
                 self.logged_in = True
                 self.current_account = account_info
                 print(f"Standard login successful for {account_holder_name}.")
@@ -30,7 +32,7 @@ class Session:
                 self.logout()
         else:
             print("Account not found.")
-
+    #  admin user login
     def admin_login(self):
         print("\n--- Admin Login ---")
         admin_name = input("Enter the admin's full name: ")
@@ -44,7 +46,7 @@ class Session:
             self.logout()
         else:
             print("Invalid admin credentials or account not found.")
-
+    # user logout
     def logout(self):
         if not self.current_account:
             print("No user is currently logged in.")
@@ -81,9 +83,6 @@ class Session:
                 sys.exit(0)
             else:
                 print("Invalid option. Please try again.")
-
-
-
 
     def run(self):
         while True:

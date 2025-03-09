@@ -70,52 +70,87 @@ class Account:
 
     # transfers money from one account to another
     def transfer(self):
+        # If admin, prompt for source account; otherwise use current user
         if self.is_admin:
             source_name = input("Enter the source account holder's full name: ").strip()
+            print()  # blank line after input
             source_account = self.bank.get_account(source_name)
             if not source_account:
                 print(f"No valid account found for '{source_name}'.")
                 return
-            print(f"Admin selected source: {source_name} (Balance = {source_account['balance']:.2f})")
+            print(f"Admin selected source: {source_name} (Balance = {source_account['balance']:.2f})\n")
         else:
             source_name = f"{self.account_info['first_name']} {self.account_info['last_name']}"
             source_account = self.account_info
+
         source_acc_input = input("Enter the source account number: ").strip()
+        print()  # blank line after input
+
+        # Check for invalid characters in the account number
+        if not source_acc_input.isdigit():
+            print("Error: Invalid account number format. Must be numeric.")
+            return
+
+        # Check that the source account number matches the account holder's record
         if source_acc_input != source_account["account_number"]:
             print("Error: The account number does not match the source account holder's record.")
             return
+
         dest_acc_input = input("Enter the destination account number: ").strip()
-        dest_account = None
-        all_names = ["john doe", "jane smith", "michael johnson", "..."]
-        for name_candidate in all_names:
-            candidate_info = self.bank.get_account(name_candidate)
-            if candidate_info and candidate_info["account_number"] == dest_acc_input:
-                dest_account = candidate_info
-                break
+        print()  # blank line after input
+
+        if not dest_acc_input.isdigit():
+            print("Error: Invalid destination account number format. Must be numeric.")
+            return
+
+        # Use the Bank method to find the destination account by number
+        dest_account = self.bank.get_account_by_number(dest_acc_input)
         if not dest_account:
             print(f"No valid destination account found for account number '{dest_acc_input}'.")
             return
+
+        # Get transfer amount
+        amount_str = input("Enter the amount to transfer: ").strip()
+        print()  # blank line after input
         try:
-            amount = float(input("Enter the amount to transfer: ").strip())
+            amount = float(amount_str)
         except ValueError:
             print("Invalid amount entered.")
             return
+
+        # Check for negative or zero
+        if amount <= 0:
+            print("Error: Negative or zero transfer amount is not allowed.")
+            return
+
+        # For standard users, limit is $1000.00
         if not self.is_admin and amount > 1000.0:
             print("Error: Maximum transfer in standard mode is $1000.00.")
             return
-        if source_account["balance"] - amount < 0:
+
+        # Check for insufficient funds
+        if source_account["balance"] < amount:
             print(f"Error: Insufficient funds in source account. Current balance is {source_account['balance']:.2f}.")
             return
+
+        # Optional check: destination account can't go negative (usually not needed for deposits)
         if dest_account["balance"] + amount < 0:
             print("Error: Destination account balance cannot go negative.")
             return
+
+        # Perform the transfer
         source_account["balance"] -= amount
         dest_account["balance"] += amount
-        print(f"Transfer successful. New source balance = {source_account['balance']:.2f}, destination balance = {dest_account['balance']:.2f}.")
+        print(f"Transfer successful.\n"
+            f"New source balance = {source_account['balance']:.2f}, "
+            f"destination balance = {dest_account['balance']:.2f}.\n")
+
+        # Write transaction logs
         transaction_code = "02"
         source_plan = source_account.get("status", "A")
         dest_plan = dest_account.get("status", "A")
-        # writes to the transaction file as "02"
+
+        # Source side transaction
         write_transaction(
             transaction_code=transaction_code,
             account_holder_name=source_name,
@@ -123,12 +158,13 @@ class Account:
             amount=amount,
             plan_code=source_plan
         )
+
+        # Destination side transaction
         dest_name = f"{dest_account['first_name']} {dest_account['last_name']}"
-        # writes to the transaction file as "02"
         write_transaction(
             transaction_code=transaction_code,
             account_holder_name=dest_name,
-            account_number=dest_account["account_number"],
+            account_number=dest_acc_input,
             amount=amount,
             plan_code=dest_plan
         )

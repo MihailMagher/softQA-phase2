@@ -1,14 +1,46 @@
 class Bank:
     # constructor method that runs when an instance of the class is created
-    def __init__(self, accounts_file="../Phase#2FIX/current accounts/current_accounts.txt"):
+    def __init__(self, accounts_file="../BigBank/current accounts/current_accounts.txt"):
         self.accounts_file = accounts_file
+    
 
+    def get_account_by_number(self, account_number):
+        account_number = account_number.strip()
+        admin_users = {"john doe", "jane smith"}  # same admin set used elsewhere
+        try:
+            with open(self.accounts_file, "r") as f:
+                for line in f:
+                    line = line.strip()
+                    if not line or "END_OF_FILE" in line:
+                        break
+                    fields = line.split('_')
+                    if len(fields) < 5:
+                        continue
+
+                    acct_num = fields[0]
+                    f_name   = fields[1]
+                    l_name   = fields[2].strip()
+                    status   = fields[3]
+                    balance_str = fields[4]
+
+                    if acct_num == account_number:
+                        full_name = (f_name + " " + l_name).lower()
+                        is_admin = (full_name in admin_users)
+                        return {
+                            "account_number": acct_num,
+                            "first_name": f_name.strip(),
+                            "last_name": l_name.strip(),
+                            "status": status,
+                            "balance": float(balance_str) / 100,
+                            "is_admin": is_admin
+                        }
+            return None
+        except FileNotFoundError:
+            print(f"Error: File '{self.accounts_file}' not found.")
+            return None
+        
     #grabs the users account information from the current accounts file
     def get_account(self, name):
-        """
-        Returns a dict of account info for the given full name (e.g. 'John Doe').
-        If no match is found, returns None.
-        """
         name = name.strip().lower()
         admin_users = {"john doe", "jane smith"}
         is_admin = (name in admin_users)
@@ -150,10 +182,6 @@ class Bank:
 
     #  Disable the users account and then logs the transaction as "07"
     def disable_account(self, is_admin):
-        """
-        Sets the account's status to 'D' in current_accounts.txt (if admin).
-        Also writes a '07' transaction record.
-        """
         if not is_admin:
             print("Error: Only admins can disable an account.")
             return
@@ -281,6 +309,6 @@ def write_transaction(transaction_code, account_holder_name, account_number, amo
 
     line = f"{transaction_code}_{name_field}_{acct_field}_{amount_field}_{plan_field}"
 
-    TRANSACTION_FILE_PATH = r"../softQA-phase2/BigBank/bank account transaction file(output)/bank_transaction_log"
+    TRANSACTION_FILE_PATH = r"../BigBank/bank account transaction file(output)/bank_transaction_log"
     with open(TRANSACTION_FILE_PATH, "a") as f:
         f.write(line + "\n")

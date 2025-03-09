@@ -3,7 +3,7 @@
 00067_Michael_Johnson     _D_00189050
 00089_Emily_Davis         _A_00050000
 00012_Chris_Brown         _D_00010025
-00034_Anna_Wilson         _A_00330000
+00034_Anna_Wilson         _A_00050000
 00056_James_Miller        _A_00275050
 00078_Olivia_Martinez     _D_00090099
 00090_Daniel_Anderson     _A_00130000

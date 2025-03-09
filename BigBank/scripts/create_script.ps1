@@ -1,4 +1,4 @@
-e# run_create.ps1
+# run_create.ps1
 
 # Directories
 $INPUT_DIR = ".\create\transaction_terminal_input"

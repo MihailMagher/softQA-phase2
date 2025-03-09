@@ -1,6 +1,6 @@
 class Bank:
     # constructor method that runs when an instance of the class is created
-    def __init__(self, accounts_file="../BigBank/current accounts/current_accounts.txt"):
+    def __init__(self, accounts_file="./current_bank_accounts.txt"):
         self.accounts_file = accounts_file
     
 
@@ -297,18 +297,33 @@ class Bank:
 
 # Writes transactions to the trasaction file
 def write_transaction(transaction_code, account_holder_name, account_number, amount, plan_code):
-    # Up to 20 chars for name, left-justified
+    # Map each transaction code to its respective folder.
+    folder_map = {
+        "00": "logout",
+        "01": "withdraw",
+        "02": "transfer",
+        "03": "paybill",
+        "04": "deposit",
+        "05": "create",
+        "06": "delete",
+        "07": "disable",
+        "08": "changeplan"
+    }
+    # Get the folder based on the transaction code; default to "other" if not found.
+    folder = folder_map.get(transaction_code, "other")
+    
+    # Format the fields as before.
     name_field = account_holder_name[:20].ljust(20)
-    # 5-char account number
     acct_field = str(account_number).rjust(5, '0')
-    # Convert to cents, pad with 'X' for demonstration
     amount_cents = int(round(amount * 100))
     amount_field = str(amount_cents).rjust(8, 'X')
-    # 2-char plan
     plan_field = plan_code[:2].ljust(2)
-
     line = f"{transaction_code}_{name_field}_{acct_field}_{amount_field}_{plan_field}"
-
-    TRANSACTION_FILE_PATH = r"../BigBank/bank account transaction file(output)/bank_transaction_log"
+    
+    # Build the relative transaction file path.
+    # For example, for a deposit (code "04") this becomes:
+    # "./deposit/bank_account_transaction_file/bank_transaction_log.etf"
+    TRANSACTION_FILE_PATH = f"./{folder}/bank_account_transaction_file/bank_transaction_log.etf"
+    
     with open(TRANSACTION_FILE_PATH, "a") as f:
         f.write(line + "\n")

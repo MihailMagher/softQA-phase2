@@ -10,9 +10,9 @@ class Session:
         
     def display_menu(self):
         print("\nPlease choose an option:")
-        print("1. Standard Login")
-        print("2. Admin Login")
-        print("3. Exit App")
+        print("standard login")
+        print("admin login")
+        print("exit app")
     # standard user login
     def standard_login(self):
         print("\n--- Standard Login ---")
@@ -71,13 +71,13 @@ class Session:
         # Prompt to log back in or exit
         while True:
             choice = input("\nWould you like to:\n"
-                        "1) Log back in\n"
-                        "2) Exit the application\n"
-                        "Enter your choice: ").strip()
-            if choice == "1":
+                           "log back in\n"
+                           "exit application\n"
+                           "Enter your choice: ").strip().lower()
+            if choice == "log back in":
                 print("\nReturning to login menu...\n")
                 break  # Simply break to return to the main session menu
-            elif choice == "2":
+            elif choice == "exit application":
                 print("Exiting the application. Goodbye!")
                 import sys
                 sys.exit(0)
@@ -87,12 +87,12 @@ class Session:
     def run(self):
         while True:
             self.display_menu()
-            choice = input("Enter your choice (1-3): ").strip()
-            if choice == "1":
+            choice = input("Enter your choice: ").strip().lower()
+            if choice == "standard login":
                 self.standard_login()
-            elif choice == "2":
+            elif choice == "admin login":
                 self.admin_login()
-            elif choice == "3":
+            elif choice == "exit app":
                 print("Exiting the application. Goodbye!")
                 break
             else:

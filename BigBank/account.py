@@ -8,24 +8,24 @@ class Account:
         self.account_info = account_info
         self.is_admin = account_info.get("is_admin", False)
         self.balance = account_info.get("balance", 0.0)
-    # Menu choices 
+     # Menu choices 
     def display_menu(self):
         user_name = f"{self.account_info['first_name']} {self.account_info['last_name']}"
         current_balance = self.account_info.get("balance", 0.0)
         print(f"\n--- Welcome {user_name}, your current balance is ${current_balance:.2f} ---")
         print("\n--- Account Menu ---")
-        print("1. Withdraw")
-        print("2. Transfer")
-        print("3. Paybill")
-        print("4. Deposit")
+        print("withdraw")
+        print("transfer")
+        print("paybill")
+        print("deposit")
         if self.is_admin:
-            print("5. Create Account")
-            print("6. Delete Account")
-            print("7. Disable Account")
-            print("8. Change Plan")
-            print("9. Logout")
+            print("create account")
+            print("delete account")
+            print("disable account")
+            print("change plan")
+            print("logout")
         else:
-            print("5. Logout")
+            print("logout")
 
     # Withdraws money for users account and write to transaction log as "01"
     def withdraw(self):
@@ -133,7 +133,7 @@ class Account:
             print(f"Error: Insufficient funds in source account. Current balance is {source_account['balance']:.2f}.")
             return
 
-        # Optional check: destination account can't go negative (usually not needed for deposits)
+        # Optional check: destination account can't go negative
         if dest_account["balance"] + amount < 0:
             print("Error: Destination account balance cannot go negative.")
             return
@@ -221,29 +221,49 @@ class Account:
     
     # Users can deposit amount tp the their account and the transaction is written as "04"
     def deposit(self):
+
         if self.is_admin:
             holder_name = input("Enter the account holder's full name: ").strip()
+            print()
             holder_account = self.bank.get_account(holder_name)
             if not holder_account:
                 print(f"No valid account found for '{holder_name}'.")
                 return
-            print(f"Admin selected: {holder_name} (Balance = {holder_account['balance']:.2f})")
+            # Check if disabled
+            if holder_account.get("status", "A") == "D":
+                print("Error: This account is disabled. Deposit not allowed.")
+                return
+
+            print(f"Admin selected: {holder_name} (Balance = {holder_account['balance']:.2f})\n")
         else:
+            # Standard user can only deposit to their own account
             holder_name = f"{self.account_info['first_name']} {self.account_info['last_name']}"
             holder_account = self.account_info
+            # Check if disabled
+            if holder_account.get("status", "A") == "D":
+                print("Error: Your account is disabled. Deposit not allowed.")
+                return
+
         acc_number_input = input("Enter the account number: ").strip()
+        print()
         if acc_number_input != holder_account["account_number"]:
             print("Error: The account number does not match the account holder's record.")
             return
+
         try:
             amount = float(input("Enter the amount to deposit: ").strip())
+            print()
         except ValueError:
             print("Invalid amount entered.")
             return
+
         if amount <= 0:
             print("Error: Deposit amount must be greater than 0.")
             return
+
         plan_code = holder_account.get("status", "A")
+
+        # Write to transaction file as code '04'
         write_transaction(
             transaction_code="04",
             account_holder_name=holder_name,
@@ -251,44 +271,45 @@ class Account:
             amount=amount,
             plan_code=plan_code
         )
-        print("Deposit successful. The deposited funds will be available next session.")
+        print("Deposit successful. The deposited funds will be available next session.\n")
+
 
     def run(self):
         while True:
             self.display_menu()
-            choice = input("Enter your choice: ").strip()
+            choice = input("Enter your choice: ").strip().lower()
             if self.is_admin:
-                if choice == "1":
+                if choice == "withdraw":
                     self.withdraw()
-                elif choice == "2":
+                elif choice == "transfer":
                     self.transfer()
-                elif choice == "3":
+                elif choice == "paybill":
                     self.paybill()
-                elif choice == "4":
+                elif choice == "deposit":
                     self.deposit()
-                elif choice == "5":
+                elif choice == "create account":
                     self.bank.create_account(is_admin=self.is_admin)
-                elif choice == "6":
+                elif choice == "delete account":
                     self.bank.delete_account(is_admin=self.is_admin)
-                elif choice == "7":
+                elif choice == "disable account":
                     self.bank.disable_account(is_admin=self.is_admin)
-                elif choice == "8":
+                elif choice == "change plan":
                     self.bank.change_plan(is_admin=self.is_admin)
-                elif choice == "9":
+                elif choice == "logout":
                     self.session.logout()
                     break
                 else:
                     print("Invalid option. Please try again.")
             else:
-                if choice == "1":
+                if choice == "withdraw":
                     self.withdraw()
-                elif choice == "2":
+                elif choice == "transfer":
                     self.transfer()
-                elif choice == "3":
+                elif choice == "paybill":
                     self.paybill()
-                elif choice == "4":
+                elif choice == "deposit":
                     self.deposit()
-                elif choice == "5":
+                elif choice == "logout":
                     self.session.logout()
                     break
                 else:

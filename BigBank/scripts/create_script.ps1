@@ -11,13 +11,13 @@ if (!(Test-Path $OUTPUT_DIR)) {
     Remove-Item "$OUTPUT_DIR\*" -Force -Recurse
 }
 
-# Loop through the 12 test files: transfer01.txt ... transfer11.txt
+# Loop through the 12 test files: create01.txt ... create11.txt
 for ($i = 1; $i -le 11; $i++) {
     $num = "{0:D2}" -f $i
     $INPUT_FILE = Join-Path $INPUT_DIR "create$num.inp"
     $OUTPUT_FILE = Join-Path $OUTPUT_DIR "create$num.bto"
 
-    Write-Output "Running test transfer$num..."
+    Write-Output "Running test create$num..."
 
     # Run main.py with input redirection and capture output.
     # In PowerShell, we can read the content of the input file and pipe it to Python.

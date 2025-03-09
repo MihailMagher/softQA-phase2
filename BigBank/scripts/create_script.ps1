@@ -1,8 +1,8 @@
 # run_transfers.ps1
 
 # Directories
-$INPUT_DIR = ".\create\transaction_terminal_input"
-$OUTPUT_DIR = ".\create\transaction_terminal_output"
+$INPUT_DIR = ".\transfer\transaction_terminal_input"
+$OUTPUT_DIR = ".\transfer\transaction_terminal_output"
 
 # Create/clean the output directory
 if (!(Test-Path $OUTPUT_DIR)) {
@@ -14,8 +14,8 @@ if (!(Test-Path $OUTPUT_DIR)) {
 # Loop through the 12 test files: transfer01.txt ... transfer11.txt
 for ($i = 1; $i -le 11; $i++) {
     $num = "{0:D2}" -f $i
-    $INPUT_FILE = Join-Path $INPUT_DIR "create$num.inp"
-    $OUTPUT_FILE = Join-Path $OUTPUT_DIR "create$num.bto"
+    $INPUT_FILE = Join-Path $INPUT_DIR "transfer$num.inp"
+    $OUTPUT_FILE = Join-Path $OUTPUT_DIR "transfer$num.bto"
 
     Write-Output "Running test transfer$num..."
 

@@ -1,6 +1,6 @@
 class Bank:
     # constructor method that runs when an instance of the class is created
-    def __init__(self, accounts_file="./current_bank_accounts.txt"):
+    def __init__(self, accounts_file="./current_bank_accounts_file.txt"):
         self.accounts_file = accounts_file
     
 
@@ -321,7 +321,6 @@ def write_transaction(transaction_code, account_holder_name, account_number, amo
     line = f"{transaction_code}_{name_field}_{acct_field}_{amount_field}_{plan_field}"
     
     # Build the relative transaction file path.
-    # For example, for a deposit (code "04") this becomes:
     # "./deposit/bank_account_transaction_file/bank_transaction_log.etf"
     TRANSACTION_FILE_PATH = f"./{folder}/bank_account_transaction_file/bank_transaction_log.etf"
     

@@ -1,2 +1,15 @@
-input session type:
-incorrect login, try again:
+Looking for file at: C:\Users\gamer\Downloads\softQA-phase2-main(2)\softQA-phase2-main\current_bank_accounts_file.txt
+
+Please choose an option:
+standard login
+admin login
+exit app
+Enter your choice: 
+--- Standard Login ---
+Enter the account holder's full name: Account not found.
+
+Please choose an option:
+standard login
+admin login
+exit app
+Enter your choice: Exiting the application. Goodbye!

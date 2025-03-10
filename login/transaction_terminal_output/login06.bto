@@ -1,4 +1,51 @@
-input session type:
-login accepted
-admin privileges are accepted
-session terminated
+Looking for file at: C:\Users\gamer\Downloads\softQA-phase2-main(2)\softQA-phase2-main\current_bank_accounts_file.txt
+
+Please choose an option:
+standard login
+admin login
+exit app
+Enter your choice: 
+--- Admin Login ---
+Enter the admin's full name: Admin login successful for john doe.
+
+--- Welcome John Doe, your current balance is $1500.75 ---
+
+--- Account Menu ---
+withdraw
+transfer
+paybill
+deposit
+create account
+delete account
+disable account
+change plan
+logout
+Enter your choice: Enter the new account holder's full name: Enter the initial balance: Invalid balance entered.
+
+--- Welcome John Doe, your current balance is $1500.75 ---
+
+--- Account Menu ---
+withdraw
+transfer
+paybill
+deposit
+create account
+delete account
+disable account
+change plan
+logout
+Enter your choice: Invalid option. Please try again.
+
+--- Welcome John Doe, your current balance is $1500.75 ---
+
+--- Account Menu ---
+withdraw
+transfer
+paybill
+deposit
+create account
+delete account
+disable account
+change plan
+logout
+Enter your choice: 

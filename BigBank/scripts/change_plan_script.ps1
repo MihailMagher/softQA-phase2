@@ -1,8 +1,8 @@
 # run_deposits.ps1
 
 # Directories 
-$INPUT_DIR = ".\deposit\transaction_terminal_input"
-$OUTPUT_DIR = ".\deposit\transaction_terminal_output"
+$INPUT_DIR = ".\changeplan\transaction_terminal_input"
+$OUTPUT_DIR = ".\changeplan\transaction_terminal_output"
 
 # Create the output directory if it doesn't exist
 if (!(Test-Path $OUTPUT_DIR)) {
@@ -12,14 +12,14 @@ if (!(Test-Path $OUTPUT_DIR)) {
 }
 
 # Loop through deposit test files deposit01.txt through deposit12.txt
-for ($i = 1; $i -le 10; $i++) {
+for ($i = 1; $i -le 9; $i++) {
     $num = "{0:D2}" -f $i
-    $INPUT_FILE = Join-Path $INPUT_DIR "deposit$num.inp"
-    $OUTPUT_FILE = Join-Path $OUTPUT_DIR "deposit$num.bto"
+    $INPUT_FILE = Join-Path $INPUT_DIR "changeplan$num.inp"
+    $OUTPUT_FILE = Join-Path $OUTPUT_DIR "changeplan$num.bto"
     
-    Write-Host "Running test deposit$num..."
+    Write-Host "Running test changeplan$num..."
 
     Get-Content $INPUT_FILE | python .\BigBank\main.py > $OUTPUT_FILE
 }
 
-Write-Host "All deposit tests completed. Check '$OUTPUT_DIR' for results."
+Write-Host "All changeplan tests completed. Check '$OUTPUT_DIR' for results."

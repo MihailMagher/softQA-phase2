@@ -5,4 +5,4 @@ create
 delete
 paybill
 changeplan
-exit app
+exit application

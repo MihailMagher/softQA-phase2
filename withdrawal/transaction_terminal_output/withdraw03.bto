@@ -1,4 +1,20 @@
-input session type:
-login accepted
-what is your ID?
-how much to withdraw?
+Looking for file at: C:\Users\gamer\Downloads\softQA-phase2-main(2)\softQA-phase2-main\current_bank_accounts_file.txt
+
+Please choose an option:
+standard login
+admin login
+exit app
+Enter your choice: 
+--- Standard Login ---
+Enter the account holder's full name: Standard login successful for chris brown.
+
+--- Welcome Chris Brown, your current balance is $1000.25 ---
+
+--- Account Menu ---
+withdraw
+transfer
+paybill
+deposit
+logout
+Enter your choice: Enter the account number: Enter the amount to withdraw: Withdrawal successful. New balance = 999.25.
+Looking for file at: C:\Users\gamer\Downloads\softQA-phase2-main(2)\softQA-phase2-main\withdraw\bank_account_transaction_file\bank_transaction_log.etf

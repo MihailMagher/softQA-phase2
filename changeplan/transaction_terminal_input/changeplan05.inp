@@ -1,4 +1,5 @@
 admin login
+<<<<<<< HEAD
 Jane Smith 
 change plan
 James Miller
@@ -6,3 +7,14 @@ James Miller
 11
 logout
 exit application
+=======
+John Doe
+change plan
+Emma Lee
+00033
+change plan
+Mason White
+00044
+logout
+exit application
+>>>>>>> b92904bccd2f1c0c2e023eb2eb5cdf2e5f757ae5

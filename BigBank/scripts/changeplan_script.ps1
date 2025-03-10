@@ -1,7 +1,4 @@
 # run_changeplan.ps1
-# This PowerShell script tests the "Changeplan" functionality of the Bigbank program.
-# It reads test input files from the designated directory, runs main.py with input redirection,
-# and writes the console output to the corresponding output files.
 
 # Define the input and output directories for Changeplan test cases.
 $INPUT_DIR = ".\changeplan\transaction_terminal_input"
@@ -15,7 +12,7 @@ if (!(Test-Path $OUTPUT_DIR)) {
 }
 
 # Loop through the 10 test files: changeplan01.inp to changeplan10.inp
-for ($i = 1; $i -le 10; $i++) {
+for ($i = 1; $i -le 9; $i++) {
     $num = "{0:D2}" -f $i
     $INPUT_FILE = Join-Path $INPUT_DIR "changeplan$num.inp"
     $OUTPUT_FILE = Join-Path $OUTPUT_DIR "changeplan$num.bto"

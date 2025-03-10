@@ -1,9 +1,0 @@
-welcome to the banking system
-enter session type:
-login accepted
-enter transaction type:
-delete transaction accepted
-account 00034 deleted
-enter transaction type:
-ERROR: No transactions allowed on deleted account
-session terminated

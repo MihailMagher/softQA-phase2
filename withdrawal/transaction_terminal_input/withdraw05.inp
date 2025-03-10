@@ -1,5 +1,5 @@
-login
-admin
+admin login
+john doe
 withdrawal
 user
 123456789
@@ -7,3 +7,5 @@ user
 view
 user
 123456789
+logout
+exit app

@@ -1,6 +1,8 @@
-login
-admin
+admin login
+john doe
 withdrawal
 wronguser
 123456789
 500
+logout
+exit app
